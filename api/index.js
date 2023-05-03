@@ -1,3 +1,5 @@
+// Express App;
+
 const express = require('express');
 const cors = require('cors');
 const { default: mongoose } = require('mongoose');
@@ -37,6 +39,21 @@ app.post('/register', async (req, res) => {
         res.status(422).json(error)
     }
 
+});
+
+app.post('/login', async (req, res) => {
+    const {email, password} = req.body;
+    const newUserDoc = await User.findOne({email});
+    if (newUserDoc) {
+       const passOkay = bcrypt.compareSync(password, newUserDoc.password);
+       if(passOkay) {
+        res.json('Password Okay');
+       } else {
+        res.status(422).json('Password Not Okay');
+       }
+    } else {
+        res.json('not found');
+    }
 });
 
 app.listen(4000);
