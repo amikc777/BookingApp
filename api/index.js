@@ -10,6 +10,7 @@ require('dotenv').config();
 const app = express();
 
 const bcryptSalt = bcrypt.genSaltSync(12);
+const jwtSecretString = 'sdfewfdsafdsafewfsdafsd';
 
 app.use(express.json());
 
@@ -43,16 +44,19 @@ app.post('/register', async (req, res) => {
 });
 
 app.post('/login', async (req, res) => {
-    const {email, password} = req.body;
-    const newUserDoc = await User.findOne({email});
+    const { email, password } = req.body;
+    const newUserDoc = await User.findOne({ email });
     if (newUserDoc) {
-       const passOkay = bcrypt.compareSync(password, newUserDoc.password);
-       if(passOkay) {
+        const passOkay = bcrypt.compareSync(password, newUserDoc.password);
+        if (passOkay) {
+            jwt.sign({ email: newUserDoc.email, id: newUserDoc._id }, jwtSecretString, {}, (error, token) => {
+                if (error) throw error;
+                res.cookie('token', token).json('Password Okay');
+            });
 
-        res.cookie('token', '').json('Password Okay');
-       } else {
-        res.status(422).json('Password Not Okay');
-       }
+        } else {
+            res.status(422).json('Password Not Okay');
+        }
     } else {
         res.json('not found');
     }
