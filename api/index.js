@@ -1,4 +1,5 @@
-// Express App;
+// Express App.
+// Our API.
 
 const express = require('express');
 const cors = require('cors');
@@ -51,7 +52,7 @@ app.post('/login', async (req, res) => {
         if (passOkay) {
             jwt.sign({ email: newUserDoc.email, id: newUserDoc._id }, jwtSecretString, {}, (error, token) => {
                 if (error) throw error;
-                res.cookie('token', token).json('Password Okay');
+                res.cookie('token', token).json(newUserDoc);
             });
 
         } else {
@@ -61,5 +62,10 @@ app.post('/login', async (req, res) => {
         res.json('not found');
     }
 });
+
+app.get('/profile', (req,res) =>{
+    //const{token} = req.cook
+    res.json('User Info');
+})
 
 app.listen(4000);
