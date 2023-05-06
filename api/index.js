@@ -7,7 +7,7 @@ const { default: mongoose } = require('mongoose');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const User = require('./models/User.js');
-const CookieParser = require('cookie-parser');
+const cookieParser = require('cookie-parser');
 require('dotenv').config();
 const app = express();
 
@@ -15,7 +15,7 @@ const bcryptSalt = bcrypt.genSaltSync(12);
 const jwtSecretString = 'sdfewfdsafdsafewfsdafsd';
 
 app.use(express.json());
-
+app.use(cookieParser());
 app.use(cors({
     credentials: true,
     origin: 'http://localhost:5173',
@@ -39,8 +39,8 @@ app.post('/register', async (req, res) => {
             password: bcrypt.hashSync(password, bcryptSalt),
         });
         res.json({ newUserDoc });
-    } catch (error) {
-        res.status(422).json(error)
+    } catch (err) {
+        res.status(422).json(err)
     }
 
 });
@@ -51,8 +51,11 @@ app.post('/login', async (req, res) => {
     if (newUserDoc) {
         const passOkay = bcrypt.compareSync(password, newUserDoc.password);
         if (passOkay) {
-            jwt.sign({ email: newUserDoc.email, id: newUserDoc._id }, jwtSecretString, {}, (error, token) => {
-                if (error) throw error;
+            jwt.sign({
+                email: newUserDoc.email,
+                id: newUserDoc._id
+            }, jwtSecretString, {}, (err, token) => {
+                if (err) throw err;
                 res.cookie('token', token).json(newUserDoc);
             });
 
@@ -64,9 +67,18 @@ app.post('/login', async (req, res) => {
     }
 });
 
-app.get('/profile', (req,res) =>{
-    //const{token} = req.cook
-    res.json('User Info');
+app.get('/profile', (req, res) => {
+    const { token } = req.cookies;
+    if (token) {
+        jwt.verify(token, jwtSecretString, {}, async(err, userData) => {
+            if (err) throw err;
+           const {name, email, id} = await User.findById(userData.id);
+            res.json({name, email, id});
+        });
+    } else {
+        res.json(null);
+    }
+
 })
 
 app.listen(4000);
