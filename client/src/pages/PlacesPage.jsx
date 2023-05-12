@@ -36,6 +36,9 @@ export default function PlacesPage() {
         );
     }
 
+    function addPhotoWithLink() {
+
+    }
     return (
         <div>
             {action !== 'new' && (
