@@ -109,8 +109,10 @@ app.post('/upload', photosMiddleware.array('photos', 100), (req, res) => {
         const ext = parts[parts.length - 1];
         const newPath = path + '.' + ext;
         fs.renameSync(path, newPath);
-        uploadedFiles.push(newPath.replace('uploads\\',''));
-        // uploadedFiles.push(newPath);
+        // had to replace the 'uploads/' with 'uploads\\'. This was causing the error that didnt display the images after uploading.
+        // This is a window/mac/linux path settings error.
+        uploadedFiles.push(newPath.replace('uploads\\','')); 
+        
     }
     res.json(uploadedFiles);
 });
