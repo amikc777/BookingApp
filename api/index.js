@@ -112,28 +112,70 @@ app.post('/upload', photosMiddleware.array('photos', 100), (req, res) => {
         fs.renameSync(path, newPath);
         // had to replace the 'uploads/' with 'uploads\\'. This was causing the error that didnt display the images after uploading.
         // This is a window/mac/linux path settings error.
-        uploadedFiles.push(newPath.replace('uploads\\','')); 
-        
+        uploadedFiles.push(newPath.replace('uploads\\', ''));
+
     }
     res.json(uploadedFiles);
 });
 
 app.post('/places', (req, res) => {
-    const {token} = req.cookies;
+    const { token } = req.cookies;
     const {
-        title, address, addedPhotos, description,
-        perks, extraInfo, checkIn, CheckOut, maxGuests, 
+        title, address, addedPhotos, description, price,
+        perks, extraInfo, checkIn, CheckOut, maxGuests,
     } = req.body;
     jwt.verify(token, jwtSecretString, {}, async (err, userData) => {
         if (err) throw err;
-       const placeDoc = await Place.create({
-            owner:userData.id,
-            title, address, addedPhotos, description,
-            perks, extraInfo, checkIn, CheckOut, maxGuests,  
+        const placeDoc = await Place.create({
+            owner: userData.id, price,
+            title, address, photos: addedPhotos, description,
+            perks, extraInfo, checkIn, CheckOut, maxGuests,
         });
         res.json(placeDoc);
     });
-   
+
 });
+
+app.get('/user-places', (req, res) => {
+    const { token } = req.cookies;
+    jwt.verify(token, jwtSecretString, {}, async (err, userData) => {
+        const { id } = userData;
+        res.json(await Place.find({ owner: id }));
+    });
+
+});
+
+app.get('/places/:id', async (req, res) => {
+    const { id } = req.params;
+    res.json(await Place.findById(id));
+});
+
+app.put('/places', async (req, res) => {
+    const { token } = req.cookies;
+    const {
+        id, title, address, addedPhotos, description,
+        perks, extraInfo, checkIn, CheckOut, maxGuests, price,
+    } = req.body;
+
+    jwt.verify(token, jwtSecretString, {}, async (err, userData) => {
+        if (err) throw err;
+        const placeDoc = await Place.findById(id);
+        // console.log(userData.id);
+        // console.log(placeDoc.owner.toString());
+        if (userData.id === placeDoc.owner.toString()) {
+            // console.log({price});
+            placeDoc.set({
+                title, address, photos: addedPhotos, description,
+                perks, extraInfo, checkIn, CheckOut, maxGuests, price,
+            });
+            await placeDoc.save();
+            res.json('ok');
+        }
+    });
+});
+
+app.get('/places', async (req, res) => {
+    res.json(await Place.find());
+})
 
 app.listen(4000);
