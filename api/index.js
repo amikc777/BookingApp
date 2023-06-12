@@ -181,10 +181,10 @@ app.get('/places', async (req, res) => {
 
 app.post('/bookings', (req, res) => {
     const {
-        place, checkIn, CheckOut, numberOfGuests, name, phone, price,
+        place, checkIn, checkOut, numberOfGuests, name, phone, price,
     } = req.body;
     Booking.create({
-        place, checkIn, CheckOut, numberOfGuests, name, phone, price,
+        place, checkIn, checkOut, numberOfGuests, name, phone, price,
     }).then((doc) => {
         res.json(doc);
     }).catch((err) => {
