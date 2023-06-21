@@ -5,9 +5,17 @@ import axios from "axios";
 import AccountNav from "../AccountNav";
 import { Navigate, useParams } from "react-router-dom";
 
+/**
+ * Component for creating or editing a place.
+ * Retrieves place data if an ID is provided in the URL params.
+ * Saves the place data to the server when the form is submitted.
+ * Redirects to the account places page upon successful save.
+ */
 export default function PlacesFormPage() {
     const { id } = useParams();
     // console.log({id});
+
+    // State variables for form inputs
     const [title, setTitle] = useState('');
     const [address, setAddress] = useState('');
     const [addedPhotos, setAddedPhotos] = useState([]);
@@ -21,6 +29,7 @@ export default function PlacesFormPage() {
     const [redirect, setRedirect] = useState(false);
 
     useEffect(() => {
+        // Fetch place data if an ID is provided
         if (!id) {
             return;
         }
@@ -39,18 +48,34 @@ export default function PlacesFormPage() {
         });
     }, [id])
 
+    /**
+     * Returns a styled header element for the form input.
+     * @param {string} text - The header text.
+     * @returns {JSX.Element} - The styled header element.
+     */
     function inputHeader(text) {
         return (
             <h2 className="text-2xl mt-4">{text}</h2>
         );
     }
 
+    /**
+     * Returns a styled description paragraph for the form input.
+     * @param {string} text - The description text.
+     * @returns {JSX.Element} - The styled description paragraph.
+     */
     function inputDescription(text) {
         return (
             <p className="text-gray-500 text-sm">{text}</p>
         );
     }
 
+    /**
+     * Returns a combination of header and description elements for the form input.
+     * @param {string} header - The header text.
+     * @param {string} description - The description text.
+     * @returns {JSX.Element} - The combination of header and description elements.
+     */
     function beforeInput(header, description) {
         return (
             <>
@@ -60,6 +85,12 @@ export default function PlacesFormPage() {
         );
     }
 
+    /**
+     * Saves the place data to the server.
+     * Updates an existing place if an ID is provided, otherwise creates a new place.
+     * Sets the redirect state to true upon successful save.
+     * @param {Event} ev - The form submit event.
+     */
     async function savePlace(ev) {
         ev.preventDefault();
         const placeData = {
@@ -68,29 +99,29 @@ export default function PlacesFormPage() {
             checkIn, checkOut, maxGuests, price,
         };
         if (id) {
-            // update
+            // update existing place
             await axios.put('/places', {
                 id, ...placeData
             });
             setRedirect(true);
-
         } else {
-            // new place
+            // create new place
             await axios.post('/places', placeData);
             setRedirect(true);
         }
-
     }
 
+    // Redirect to the account places page if redirect state is true
     if (redirect) {
         return <Navigate to={'/account/places'} />
     }
+
     return (
         <div>
             <AccountNav />
             <form onSubmit={savePlace}>
                 {beforeInput('Title', 'Title for your place. Advertise it.')}
-                <input type="text" value={title} onChange={ev => setTitle(ev.target.value)} placeholder="title, example: My appartment" />
+                <input type="text" value={title} onChange={ev => setTitle(ev.target.value)} placeholder="title, example: My apartment" />
 
                 {beforeInput('Address', 'Address for this place.')}
                 <input type="text" value={address} onChange={ev => setAddress(ev.target.value)} placeholder="address" />
