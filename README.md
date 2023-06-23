@@ -36,7 +36,7 @@ This application is built using the MERN stack, which includes MongoDB, Express,
 3. Install the frontend dependencies: `cd ../client` and run `npm install`
 4. Start the backend server: In the `api` directory, run `nodemon index.js`
 5. Start the frontend development server: In the `client` directory, run `yarn dev`
-6. cd BookingApp/api/ and add your MONGO_URL to the .env file.
+6. cd BookingApp/api/ and add a .env file. In this file add your MONGO_URL = ... , or you can create an environmental variable with your mongo_url and refer to it. 
 7. Open your browser and visit `http://localhost:3000` to access the app.
 
 # Future Features
