@@ -17,7 +17,17 @@ This application is built using the MERN stack, which includes MongoDB, Express,
 - Express: A web application framework used for building the server-side of the application.
 - React: A JavaScript library used for building the user interface.
 - Node.js: A JavaScript runtime environment used for server-side development.
-- Other dependencies: Look inside the node_modules for both /api and /client for third-party packages installed.
+- Other Dependencies:
+  - cors: Middleware for enabling Cross-Origin Resource Sharing (CORS).
+  - mongoose: An Object Data Modeling (ODM) library for MongoDB and Node.js.
+  - bcryptjs: A library for hashing passwords.
+  - jsonwebtoken: A library for generating and verifying JSON Web Tokens (JWT).
+  - cookie-parser: Middleware for parsing cookies in Express.
+  - image-downloader: A library for downloading images from URLs.
+  - multer: Middleware for handling file uploads.
+  - fs: A Node.js module for interacting with the file system.
+  - dotenv: A module for loading environment variables from a `.env` file.
+
 
 ## Installation
 
