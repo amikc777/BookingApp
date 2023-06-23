@@ -1,4 +1,4 @@
-Booking App
+## Booking App
 
 This application is built using the MERN stack, which includes MongoDB, Express, React, and Node.js. It allows users to register an account, login with their credentials, and book places to stay or create bookings for others to select and purchase, similar to Airbnb.
 
